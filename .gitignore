@@ -1,3 +1,11 @@
+Dockerfile
+.dockerignore
+
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
 .env
 .venv/
 app.yaml
