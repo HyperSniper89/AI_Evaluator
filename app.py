@@ -31,11 +31,11 @@ connector = Connector()
 # function to return the database connection
 def getconn() -> pymysql.connections.Connection:
     conn: pymysql.connections.Connection = connector.connect(
-        "promptevaluator:europe-west2:promptevaluator_cloudbuild",
+        "promptevaluator:europe-west2:cloud-evaluator-db",
         "pymysql",
         user="HyperSniper",
         password=get_secret(project_id, "DB_PASSWORD"),
-        db="cloud-evaluator-db"
+        db="evaluation_db"
     )
     return conn
 
