@@ -1,4 +1,3 @@
-
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
@@ -54,3 +53,4 @@ class Evaluation(db.Model):
     appropriateness = db.Column(db.Integer, nullable=True)
     clarity = db.Column(db.Integer, nullable=True)
     noanswer = db.Column(db.Boolean, default=False)
+    rank = db.Column(db.Integer, nullable=True)

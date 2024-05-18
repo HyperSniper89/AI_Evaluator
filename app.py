@@ -1,17 +1,18 @@
 from flask import Flask, jsonify, request, render_template
-#from flask_migrate import Migrate
 import pymysql
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from google.cloud import secretmanager
+from google.cloud.sql.connector import Connector
+import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
 import openai
-from models import Category, db, User, Prompt, Response, Evaluation, EvaluationTask
+from models import Category, User, Prompt, Response, Evaluation, EvaluationTask, db
 
 
 
 project_id = "promptevaluator"
-
 def get_secret(project_id, secret_id, version_id="latest"):
     client = secretmanager.SecretManagerServiceClient()
     name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
@@ -20,21 +21,40 @@ def get_secret(project_id, secret_id, version_id="latest"):
     
 openai_api_key = get_secret(project_id, "OPENAI_API_KEY")
 secret_key = get_secret(project_id, "SECRET_KEY")
-database_url = get_secret(project_id, "ConnectionString")
-
-
 client = openai.OpenAI(api_key=openai_api_key)
+
 
 app = Flask(__name__)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+connector = Connector()
+# function to return the database connection
+def getconn() -> pymysql.connections.Connection:
+    conn: pymysql.connections.Connection = connector.connect(
+        "promptevaluator:europe-west2:promptevaluator_cloudbuild",
+        "pymysql",
+        user="HyperSniper",
+        password=get_secret(project_id, "DB_PASSWORD"),
+        db="cloud-evaluator-db"
+    )
+    return conn
+
+# create connection pool
+pool = sqlalchemy.create_engine(
+    "mysql+pymysql://",
+    creator=getconn,
+)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://"
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'creator': getconn
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 
-db.init_app(app)
-#migrate = Migrate(app, db)
+#db = SQLAlchemy(app)
 
+db.init_app(app)
 
 
 """ Helper functions """
