@@ -1,0 +1,37 @@
+/* styles.css */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+p {
+    font-size: 1.1em;
+    color: #6c757d;
+}
+
+#responsesContainer {
+    margin-top: 20px;
+}
+
+.response-block {
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#infoButton, #nextButton {
+    margin-top: 20px;
+}

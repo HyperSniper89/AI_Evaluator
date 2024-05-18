@@ -1,24 +1,39 @@
 from flask import Flask, jsonify, request, render_template
-from flask_migrate import Migrate
+#from flask_migrate import Migrate
+import pymysql
+from flask_cors import CORS
 from dotenv import load_dotenv
-#from flask_cors import CORS
 import os
+from google.cloud import secretmanager
 import openai
 from models import Category, db, User, Prompt, Response, Evaluation, EvaluationTask
 
-load_dotenv()
 
-api_key = os.getenv('OPENAI_API_KEY')
-if not api_key:
-    raise ValueError("OPENAI_API_KEY is not set in the environment variables")
-client = openai.OpenAI(api_key=api_key)  
+
+project_id = "promptevaluator"
+
+def get_secret(project_id, secret_id, version_id="latest"):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    response = client.access_secret_version(name=name)
+    return response.payload.data.decode('UTF-8')
+    
+openai_api_key = get_secret(project_id, "OPENAI_API_KEY")
+secret_key = get_secret(project_id, "SECRET_KEY")
+database_url = get_secret(project_id, "ConnectionString")
+
+
+client = openai.OpenAI(api_key=openai_api_key)
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///evaluation_tool.db'
+CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = secret_key
 
 db.init_app(app)
-migrate = Migrate(app, db)
+#migrate = Migrate(app, db)
 
 
 
@@ -58,7 +73,10 @@ def get_evaluation_task(task_id):
         if existing_response:
             response_text = existing_response.text
         else:
-            response_text = fetch_response_from_openai("System message for context", prompt.text)
+            try:
+                response_text = fetch_response_from_openai("System message for context", prompt.text)
+            except Exception as e:
+                response_text = 'Error fetching response: ' + str(e)
             # Store new response in the database
             new_response = Response(prompt_id=prompt.id, text=response_text, user_id=user_id)
             db.session.add(new_response)
@@ -149,7 +167,6 @@ def submit_evaluation():
 
 
 
-
 @app.route('/get_current_task', methods=['GET'])
 def get_current_task():
     task_id = request.args.get('task_id', type=int)
@@ -187,55 +204,39 @@ def get_current_task():
     })
 
 
+""" db_user = os.environ.get('CLOUD_SQL_USERNAME')
+if not db_user: raise EnvironmentError('CLOUD_SQL_USERNAME environment variable not set')
+db_password = os.environ.get('CLOUD_SQL_PASSWORD')
+if not db_password: raise EnvironmentError('CLOUD_SQL_PASSWORD environment variable not set')
+db_name = os.environ.get('CLOUD_SQL_DATABASE')
+if not db_name: raise EnvironmentError('CLOUD_SQL_DATABASE environment variable not set')
+db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
+if not db_connection_name: raise EnvironmentError('CLOUD_SQL_CONNECTION_NAME environment variable not set')
+openai_api_key = os.environ.get('OPENAI_API_KEY')
+if not openai_api_key: raise EnvironmentError('OPENAI_API_KEY environment variable not set') """
+
+""" def open_connection():
+    unix_socket = '/cloudsql/{}'.format(db_connection_name)
+    try:
+        if os.environ.get('GAE_ENV') == 'standard':
+            conn = pymysql.connect(user=db_user,
+                                password=db_password, 
+                                unix_socket=unix_socket,
+                                db=db_name,
+                                cursorclass=pymysql.cursors.DictCursor
+                                )
+    except pymysql.MySQLError as e:
+            return e
+    return conn """
+
+""" load_dotenv()
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    raise ValueError("OPENAI_API_KEY is not set in the environment variables") 
+client = openai.OpenAI(api_key=api_key)  """
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get('PORT', 8080)))
 
-""" def prefetch_next_task_responses(task_id, user_id):
-    prompts = Prompt.query.filter_by(evaluation_task_id=task_id).all()
-    for prompt in prompts:
-        try:
-            # Fetch data directly without caching
-            response_text = fetch_response_from_openai("System message for context", prompt.text)
-
-            # Store the response in the database with a valid user_id
-            new_response = Response(prompt_id=prompt.id, text=response_text, user_id=user_id)
-            db.session.add(new_response)
-            db.session.commit()  # Commit the response to the database
-
-        except Exception as e:
-            print(f"Error while prefetching responses: {e}")
-            # Handle the error (log, retry, alert, etc.) """
-
-
-""" @app.route('/fetch_prompt_response', methods=['POST'])
-def fetch_prompt_response():
-    data = request.json
-    system_message = data['system_message']
-    user_message = data['user_message']
-    
-    response_text = fetch_response_from_openai(system_message, user_message)
-    if response_text:
-        return jsonify({'response': response_text}), 200
-    else:
-        return jsonify({'error': 'Failed to fetch response'}), 500 """
-
-""" # Update user information
-@app.route('/update_user/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-    
-    data = request.json
-    user.username = data.get('username', user.username)
-    user.age = data.get('age', user.age)
-    user.gender = data.get('gender', user.gender)
-    user.occupation = data.get('occupation', user.occupation)
-    db.session.commit()
-
-    return jsonify({'message': 'User updated successfully', 'user': {
-        'username': user.username,
-        'age': user.age,
-        'gender': user.gender,
-        'occupation': user.occupation
-    }}), 200 """

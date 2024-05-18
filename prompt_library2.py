@@ -38,14 +38,10 @@ def create_evaluation_task(level, subject, topic, setting, is_RAG_enabled, promp
     db.session.commit()
 
 def add_evaluation_tasks():
-        """ topics_biology_university = ["Cellular Biology", "Genetics", "Ecology", "Molecular Biology", "Photosynthesis"] """
-        topics_biology_university = ["Cellular Biology"]
-        """ topics_physics_university = ["Quantum Mechanics", "Thermodynamics", "Electromagnetism", "Particle Physics", "Relativity"] """
-        topics_physics_university = ["Quantum Mechanics"]
-        """ topics_biology_9th_grade = ["Plant Biology", "Human Anatomy", "Microorganisms", "Genetic Traits", "Ecosystems"] """
-        topics_biology_9th_grade = ["Plant Biology"]
-        """ topics_physics_9th_grade = ["Mechanics", "Energy", "Waves", "Electricity", "Magnetism"] """
-        topics_physics_9th_grade = ["Mechanics"]
+        topics_biology_university = ["Cellular Biology", "Genetics", "Ecology", "Molecular Biology", "Photosynthesis"]
+        topics_physics_university = ["Quantum Mechanics", "Thermodynamics", "Electromagnetism", "Particle Physics", "Relativity"]
+        topics_biology_high_school = ["Plant Biology", "Human Anatomy", "Microorganisms", "Genetic Traits", "Ecosystems"]
+        topics_physics_high_school = ["Mechanics", "Energy", "Waves", "Electricity", "Magnetism"]
         # Create 5 University level Biology and Physics tasks
         for topic in topics_biology_university:
             create_evaluation_task("University", "Biology", topic, "Appropriateness for University students", False,
@@ -59,18 +55,18 @@ def add_evaluation_tasks():
                                     {'text': f'You are a University teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
                                     {'text': f'In a group of university students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
-        # Create 5 9th grade Biology and Physics tasks
-        for topic in topics_biology_9th_grade:
+        # Creating 5 9th grade Biology and Physics tasks
+        for topic in topics_biology_high_school:
             create_evaluation_task("9th grade", "Biology", topic, "Appropriateness for 9th grade students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
-                                    {'text': f'You are a 9th-grade teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group 9th grade(S3) students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'You are a high school teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
+                                    {'text': f'In a group high school students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
-        for topic in topics_physics_9th_grade:
+        for topic in topics_physics_high_school:
             create_evaluation_task("9th grade", "Physics", topic, "Appropriateness for 9th grade students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
-                                    {'text': f'You are a 9th-grade teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group 9th grade(S3) students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'You are a high school teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
+                                    {'text': f'In a group of high school students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
             
 def add_RAG_evaluation_tasks():
     topics_university = ["Advanced Genetics", "Advanced Mechanics"]
@@ -93,4 +89,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         add_evaluation_tasks()
-        add_RAG_evaluation_tasks()
+        #add_RAG_evaluation_tasks()
