@@ -61,7 +61,7 @@ db.init_app(app)
 def fetch_response_from_openai(system_message, user_message):
     try:
         completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": user_message}

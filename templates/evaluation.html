@@ -93,7 +93,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const nextButton = document.querySelector('.btn.btn-primary');
         let currentTaskId = 1;  // Start with the first evaluation task
-        let maxTaskId = 4;
+        let maxTaskId = 20;
         let userId = sessionStorage.getItem('user_id');  // Retrieve user_id from session storage
 
         // Redirects to a new page
@@ -180,7 +180,7 @@
             if (checkIfAllMetricsInteracted()) {
                 submitEvaluations(userId);  // Submit the evaluations before loading the next task
                 currentTaskId += 1;  // Increment to load the next task
-                loadEvaluationTask(currentTaskId, userId);  // Load the new task data
+                loadEvaluationTask(currentTaskId, userId);  // loading the new task data
             }
         });
     
@@ -231,10 +231,10 @@
     
             responseBlocks.forEach((block, blockIndex) => {
                 const evaluation = {
-                    response_id: parseInt(block.dataset.promptId),  // Unique ID for the response
-                    user_id: userId,  // User performing the evaluation
-                    evaluator_type: 'Human',  // Assuming human evaluators
-                    noanswer: false  // Default to false, set to true if skipped
+                    response_id: parseInt(block.dataset.promptId),  // unique ID for the response
+                    user_id: userId, 
+                    evaluator_type: 'Human', 
+                    noanswer: false  
                 };
     
                 ['correctness', 'relevance', 'appropriateness', 'clarity'].forEach(metric => {
@@ -250,7 +250,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ evaluations: evaluations })  // Send all evaluations in one request
+                body: JSON.stringify({ evaluations: evaluations })  // all evaluations in one request
             })
             .then(response => response.json())
             .then(data => console.log('Evaluations submitted:', data))
