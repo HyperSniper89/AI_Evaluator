@@ -95,17 +95,29 @@
         let currentTaskId = 1;  // Start with the first evaluation task
         let maxTaskId = 20;
         let userId = sessionStorage.getItem('user_id');  // Retrieve user_id from session storage
-
         // Redirects to a new page
         function redirectToCompletionPage() {
                 window.location.href = '/completion'; 
+        }
+
+        function ensureUniqueRankings(event) {
+            if (event.target.name.startsWith('ranking')) {
+                const selectedRanking = event.target.value;
+                const allRankings = document.querySelectorAll(`input[name^="ranking"]:checked`);
+                const currentBlockIndex = event.target.name.match(/\d+/)[0];
+                allRankings.forEach(radio => {
+                    const otherBlockIndex = radio.name.match(/\d+/)[0];
+                    if (radio.value === selectedRanking && otherBlockIndex !== currentBlockIndex) {
+                        radio.checked = false;
+                    }
+                });
+            }
         }
         
         // Function to check if all metrics have been interacted with
         function checkIfAllMetricsInteracted() {
             const responseBlocks = document.querySelectorAll('.response-block');
-            let allInteracted = true;  // Assume all are interacted until proven otherwise
-
+            let allInteracted = true; 
             responseBlocks.forEach((block, blockIndex) => {
                 const metrics = ['correctness', 'relevance', 'appropriateness', 'clarity'];
                 metrics.forEach(metric => {
@@ -116,6 +128,11 @@
                         allInteracted = false;  // If neither a radio button is selected nor the skip button is clicked
                     }
                 });
+                // check if ranking is selected
+                const selectedRanking = document.querySelector(`input[name="ranking${blockIndex}"]:checked`);
+                if (!selectedRanking) {
+                    allInteracted = false;
+                }
             });
     
             return allInteracted;  // Return true if all metrics have been interacted with, otherwise false
@@ -164,11 +181,10 @@
                     });
     
                     if (taskId === maxTaskId) {
-                        nextButton.textContent = 'Finish evaluation';  // Change text to "Finish evaluation"
+                        nextButton.textContent = 'Finish evaluation';  // changes button text to "Finish evaluation"
                     } else {
                     prefetchNextEvaluationTask(taskId + 1, userId);  // Prefetch the next task if there are more
                     }
-
                     updateNextButtonState();  // Re-check the state of the "Next" button
                 })
                 .catch(error => console.error(`Error fetching current task ${taskId}:`, error));
@@ -180,68 +196,98 @@
             if (checkIfAllMetricsInteracted()) {
                 submitEvaluations(userId);  // Submit the evaluations before loading the next task
                 currentTaskId += 1;  // Increment to load the next task
-                loadEvaluationTask(currentTaskId, userId);  // loading the new task data
+                loadEvaluationTask(currentTaskId, userId);  // Load the new task data
             }
         });
     
-        // Load the first evaluation task on page load
-        loadEvaluationTask(currentTaskId, userId);
-    
-        document.addEventListener('change', updateNextButtonState);  // Update the button state based on interactions
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('skip-button')) {
-                event.target.classList.add('clicked');  
-                updateNextButtonState();  // Update the button state if the skip button is clicked
-            }
-        });
+        // Function to shuffle the array
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
-        // Function to prefetch the next evaluation task
-        function prefetchNextEvaluationTask(taskId, userId) {
-            fetch(`/get_evaluation_task/${taskId}?user_id=${userId}`)  // Fetch the next task
-                .then(response => response.json())
-                .then(data => {
-                    console.log(`Prefetched data for task ${taskId}:`, data);
-                    sessionStorage.setItem(`evaluation_task_${taskId}`, JSON.stringify(data));  // Store prefetched data in session storage
-                })
-                .catch(error => console.error(`Error prefetching task ${taskId}:`, error));
+    // Function to load the evaluation task
+    function loadEvaluationTask(taskId, userId) {
+        if (taskId > maxTaskId) {
+            redirectToCompletionPage();  // Redirect when all tasks are done
+            return;  // Stop further execution
         }
-    
-        function generateRatingsHtml(index) {
-            let ratingsHtml = '';
-            const metrics = ['correctness', 'relevance', 'appropriateness', 'clarity'];
-    
-            metrics.forEach(metric => {
-                ratingsHtml += `<label>${metric.charAt(0).toUpperCase() + metric.slice(1)}:</label>`;
-                ratingsHtml += `<div class="form-check-inline">`;
-    
-                for (let i = 1; i <= 5; i++) {
-                    ratingsHtml += `<label class="form-check-label">${i} <input type="radio" class="form-check-input" name="${metric}${index}" value="${i}"></label>`;
+        fetch(`/get_current_task?task_id=${taskId}&user_id=${userId}`)  // Fetch data for the current task
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Fetched data for task ${taskId}:`, data);
+
+                document.getElementById('setting').textContent = `Setting: ${data.context}`;
+                document.getElementById('subject').textContent = `Subject: ${data.subject}`;
+                document.getElementById('topic').textContent = `Topic: ${data.topic}`;
+
+                const responsesContainer = document.getElementById('responsesContainer');
+                responsesContainer.innerHTML = '';  // Clear existing content
+
+                // Shuffle the responses
+                const shuffledResponses = shuffleArray(data.responses);
+
+                shuffledResponses.forEach((response, index) => {
+                    const responseBlock = document.createElement('div');
+                    responseBlock.className = 'response-block';
+                    responseBlock.dataset.promptId = response.prompt_id;
+
+                    responseBlock.innerHTML = `
+                        <h4>AI-generated response:</h4>
+                        <p>${response.response_text}</p>
+                        <div class="ratings">${generateRatingsHtml(index)}</div>
+                    `;
+
+                    responsesContainer.appendChild(responseBlock);
+                });
+
+                if (taskId === maxTaskId) {
+                    nextButton.textContent = 'Finish evaluation';  // Change button text to "Finish evaluation"
+                } else {
+                    prefetchNextEvaluationTask(taskId + 1, userId);  // Prefetch the next task if there are more
                 }
-    
-                ratingsHtml += `<button class="btn btn-secondary btn-sm skip-button" data-metric="${metric}" data-index="${index}">Skip</button>`;
-                ratingsHtml += `</div>`;
-            });
-    
-            return ratingsHtml;
+                updateNextButtonState();  // Re-check the state of the "Next" button
+            })
+            .catch(error => console.error(`Error fetching current task ${taskId}:`, error));
+    }
+
+
+        //function to add ranking section
+        function generateRankingHtml(index) {
+            let rankingHtml = '<label>Ranking:</label><div class="form-check-inline">';
+            for (let i = 1; i <= 3; i++) {
+                rankingHtml += `<label class="form-check-label">${i} <input type="radio" class="form-check-input" name="ranking${index}" value="${i}"></label>`;
+            }
+            rankingHtml += '</div>';
+            return rankingHtml;
         }
-    
+
         function submitEvaluations(userId) {
             const evaluations = [];
             const responseBlocks = document.querySelectorAll('.response-block');
     
             responseBlocks.forEach((block, blockIndex) => {
                 const evaluation = {
-                    response_id: parseInt(block.dataset.promptId),  // unique ID for the response
-                    user_id: userId, 
-                    evaluator_type: 'Human', 
-                    noanswer: false  
+                    response_id: parseInt(block.dataset.promptId),  // Unique ID for the response
+                    user_id: userId,  // User performing the evaluation
+                    evaluator_type: 'Human',  // Assuming human evaluators
+                    noanswer: false  // Default to false, set to true if skipped
                 };
     
                 ['correctness', 'relevance', 'appropriateness', 'clarity'].forEach(metric => {
                     const selectedRadio = document.querySelector(`input[name="${metric}${blockIndex}"]:checked`);
                     evaluation[metric] = selectedRadio ? parseInt(selectedRadio.value) : 0;  // Assign the selected value, default to 0 if not selected
                 });
-    
+                
+                // capture the ranking value
+                const selectedRanking = document.querySelector(`input[name="ranking${blockIndex}"]:checked`);
+                evaluation.rank = selectedRanking ? parseInt(selectedRanking.value) : 0;
+
+                console.log(`Response ID: ${evaluation.response_id}, Rank: ${evaluation.rank}`);
+
                 evaluations.push(evaluation);  // Add to evaluations array
             });
     
@@ -250,7 +296,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ evaluations: evaluations })  // all evaluations in one request
+                body: JSON.stringify({ evaluations: evaluations })  // Send all evaluations in one request
             })
             .then(response => response.json())
             .then(data => console.log('Evaluations submitted:', data))

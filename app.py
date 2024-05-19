@@ -161,6 +161,7 @@ def submit_evaluation():
         appropriateness = evaluation.get('appropriateness', None)
         clarity = evaluation.get('clarity', None)
         noanswer = evaluation.get('noanswer', False)
+        rank = evaluation.get('rank', None)
 
         # Create and store the evaluation
         new_evaluation = Evaluation(
@@ -171,7 +172,8 @@ def submit_evaluation():
             relevance=relevance,
             appropriateness=appropriateness,
             clarity=clarity,
-            noanswer=noanswer
+            noanswer=noanswer,
+            rank=rank
         )
 
         db.session.add(new_evaluation)
