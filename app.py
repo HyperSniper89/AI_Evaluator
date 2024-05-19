@@ -197,7 +197,7 @@ def get_current_task():
     if not task_id or not user_id:
         return jsonify({'error': 'Task ID or User ID is missing'}), 400
 
-    # Fetch the task with a join to include category details
+    # fetching task with a join to include category details!
     task = EvaluationTask.query \
         .join(Category, EvaluationTask.category_id == Category.id) \
         .add_columns(EvaluationTask.id, EvaluationTask.context, EvaluationTask.subject, Category.topic) \
@@ -220,42 +220,11 @@ def get_current_task():
         'task_id': task.id,
         'context': task.context,
         'subject': task.subject,
-        'topic': task.topic,  # This line sends the topic info to the frontend
+        'topic': task.topic, 
         'responses': responses,
         'more_tasks': len(responses) > 0
     })
 
-
-""" db_user = os.environ.get('CLOUD_SQL_USERNAME')
-if not db_user: raise EnvironmentError('CLOUD_SQL_USERNAME environment variable not set')
-db_password = os.environ.get('CLOUD_SQL_PASSWORD')
-if not db_password: raise EnvironmentError('CLOUD_SQL_PASSWORD environment variable not set')
-db_name = os.environ.get('CLOUD_SQL_DATABASE')
-if not db_name: raise EnvironmentError('CLOUD_SQL_DATABASE environment variable not set')
-db_connection_name = os.environ.get('CLOUD_SQL_CONNECTION_NAME')
-if not db_connection_name: raise EnvironmentError('CLOUD_SQL_CONNECTION_NAME environment variable not set')
-openai_api_key = os.environ.get('OPENAI_API_KEY')
-if not openai_api_key: raise EnvironmentError('OPENAI_API_KEY environment variable not set') """
-
-""" def open_connection():
-    unix_socket = '/cloudsql/{}'.format(db_connection_name)
-    try:
-        if os.environ.get('GAE_ENV') == 'standard':
-            conn = pymysql.connect(user=db_user,
-                                password=db_password, 
-                                unix_socket=unix_socket,
-                                db=db_name,
-                                cursorclass=pymysql.cursors.DictCursor
-                                )
-    except pymysql.MySQLError as e:
-            return e
-    return conn """
-
-""" load_dotenv()
-api_key = os.getenv('OPENAI_API_KEY')
-if not api_key:
-    raise ValueError("OPENAI_API_KEY is not set in the environment variables") 
-client = openai.OpenAI(api_key=api_key)  """
 
 
 
