@@ -47,26 +47,30 @@ def add_evaluation_tasks():
             create_evaluation_task("University", "Biology", topic, "Appropriateness for University students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
                                     {'text': f'You are a University teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group of university students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'Explain {topic} to a group of university students, in an engaging way with an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False},
+                                    {'text': f'You are a University teacher. Explain {topic} to a group of university students, in an engaging way with an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
         for topic in topics_physics_university:
             create_evaluation_task("University", "Physics", topic, "Appropriateness for University students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
                                     {'text': f'You are a University teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group of university students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'Explain {topic} to a group of university students, in an engaging way with an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False},
+                                    {'text': f'You are a University teacher. Explain {topic} to a group of university students, in an engaging way with an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
         # Creating 5 9th grade Biology and Physics tasks
         for topic in topics_biology_high_school:
-            create_evaluation_task("9th grade", "Biology", topic, "Appropriateness for 9th grade students", False,
+            create_evaluation_task("high school", "Biology", topic, "Appropriateness for 9th grade students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
                                     {'text': f'You are a high school teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group high school students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'Explain {topic} to a group of high school students, in an engaging way with an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False},
+                                    {'text': f'You are a high school teacher. Explain {topic} to a group of high school students, in an engaging way with an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
         for topic in topics_physics_high_school:
-            create_evaluation_task("9th grade", "Physics", topic, "Appropriateness for 9th grade students", False,
+            create_evaluation_task("high school", "Physics", topic, "Appropriateness for high school students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
                                     {'text': f'You are a high school teacher. Explain {topic}.', 'setting': 'Role-Based', 'is_RAG_enabled': False},
-                                    {'text': f'In a group of high school students, that are interested in learning about {topic}. Explain {topic} in a engaging way and give an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
+                                    {'text': f'Explain {topic} to a group of high school students, in an engaging way with an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False},
+                                    {'text': f'You are a high school teacher. Explain {topic} to a group of high school students, in an engaging way with an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
             
 def add_RAG_evaluation_tasks():
     topics_university = ["Advanced Genetics", "Advanced Mechanics"]
