@@ -258,7 +258,7 @@
         //function to add ranking section
         function generateRankingHtml(index) {
             let rankingHtml = '<label>Ranking:</label><div class="form-check-inline">';
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 4; i++) {
                 rankingHtml += `<label class="form-check-label">${i} <input type="radio" class="form-check-input" name="ranking${index}" value="${i}"></label>`;
             }
             rankingHtml += '</div>';
@@ -273,8 +273,8 @@
                 const evaluation = {
                     response_id: parseInt(block.dataset.promptId),  // Unique ID for the response
                     user_id: userId,  // User performing the evaluation
-                    evaluator_type: 'Human',  // Assuming human evaluators
-                    noanswer: false  // Default to false, set to true if skipped
+                    evaluator_type: 'Human', 
+                    noanswer: false  // default to false, set to true if skipped
                 };
     
                 ['correctness', 'relevance', 'appropriateness', 'clarity'].forEach(metric => {
