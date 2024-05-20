@@ -147,6 +147,15 @@
             const allInteracted = checkIfAllMetricsInteracted();
             nextButton.disabled = !allInteracted;  // Enable the button if all metrics are interacted with
         }
+
+        // Function to shuffle the array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
     
         // Function to load the evaluation task
         function loadEvaluationTask(taskId, userId) {
