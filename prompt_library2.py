@@ -38,11 +38,11 @@ def create_evaluation_task(level, subject, topic, setting, is_RAG_enabled, promp
     db.session.commit()
 
 def add_evaluation_tasks():
-        topics_biology_university = ["Cellular Biology", "Genetics", "Ecology", "Molecular Biology", "Photosynthesis"]
-        topics_physics_university = ["Quantum Mechanics", "Thermodynamics", "Electromagnetism", "Particle Physics", "Relativity"]
-        topics_biology_high_school = ["Plant Biology", "Human Anatomy", "Microorganisms", "Genetic Traits", "Ecosystems"]
-        topics_physics_high_school = ["Mechanics", "Energy", "Waves", "Electricity", "Magnetism"]
-        # Create 5 University level Biology and Physics tasks
+        topics_biology_university = ["Cellular Biology", "Genetics", "Photosynthesis"]
+        topics_physics_university = ["Quantum Mechanics", "Thermodynamics", "Electromagnetism"]
+        topics_biology_high_school = ["Plant Biology", "Microorganisms", "Ecosystems"]
+        topics_physics_high_school = ["Mechanics", "Energy", "Magnetism"]
+        # 3 University level Biology and Physics tasks
         for topic in topics_biology_university:
             create_evaluation_task("University", "Biology", topic, "Appropriateness for University students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
@@ -57,7 +57,7 @@ def add_evaluation_tasks():
                                     {'text': f'Explain {topic} to a group of university students, in an engaging way with an example.' , 'setting': 'Contextual', 'is_RAG_enabled': False},
                                     {'text': f'You are a University teacher. Explain {topic} to a group of university students, in an engaging way with an example.', 'setting': 'Contextual', 'is_RAG_enabled': False}])
 
-        # Creating 5 9th grade Biology and Physics tasks
+        # 3 high school Biology and Physics tasks
         for topic in topics_biology_high_school:
             create_evaluation_task("high school", "Biology", topic, "Appropriateness for 9th grade students", False,
                                    [{'text': f'Explain {topic}.', 'setting': 'Neutral', 'is_RAG_enabled': False},
