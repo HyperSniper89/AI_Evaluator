@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Dear evaluator, welcome to the prompt evaluation tool evaluation schema</h2>
+        <h2>Dear evaluator, welcome to the prompt evaluation schema</h2>
         <p>Please read the following instructions carefully before you begin your session</p>
         <ul>
             <li ><strong>Information</strong></li>
@@ -20,10 +20,13 @@
             <li><strong></strong> These outputs will be generated uniquely for you</li>
             <li><strong>Your Task</strong></li>
             <li><strong></strong> Rate the response based on correctness, relevance, appropriateness, and clarity.</li>
+            <li><strong></strong> You will be presented with 4 outputs from the AI for each evaluation task</li>
+            <li><strong></strong> If you encounter that an evalation task presents the text "No response available, rate everything to 1 and rank lowest, then continue</li>
+            <li><strong></strong> Rank the outputs from 1-4, where 1 is the output you rate the highest</li>
             <li><strong></strong> You can skip a response if you are unsure about the evaluation, but you have to interact with all the metrics in order to proceed to the next evaluation task</li>
             <li><strong></strong> Your evaluations will help to determine what kind of prompts are most benificial for learning.</li>
-            <li><strong></strong> Below are some specifications the evalation metrics ordinal scale. Please read them carefully.</li>
-            <li><strong></strong> During the evaluationm you can always access the definitions of the evaluation metrics by pressing the 'info' button at the bottom of the screen</li>
+            <li><strong></strong> Below are the definitions of the evalation metrics ordinal scale. Please read them carefully.</li>
+            <li><strong></strong> During the evaluation you can always access the definitions of the evaluation metrics by pressing the 'info' button at the bottom of the screen</li>
             <li><strong></strong> Thank you for participating in this experiment</li>
         </ul>
     </div>
@@ -83,11 +86,11 @@
         $(document).ready(function() {
           const startEvaluationButton = $('#startEvaluationButton');
     
-          // Disable button for 15 seconds
+          // Disable button for 30 seconds - This is to give time fo the API to fetch the data
           startEvaluationButton.prop('disabled', true);
           let timer = setTimeout(function() {
             startEvaluationButton.prop('disabled', false); // Enable button after 15 seconds
-          }, 30000); // 15 seconds in milliseconds
+          }, 30000); // 30 seconds in milliseconds
     
           // Redirect on click (after timer completes)
           startEvaluationButton.click(function() {
