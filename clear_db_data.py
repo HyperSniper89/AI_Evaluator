@@ -1,7 +1,7 @@
-from app import app  # Import the Flask app instance
-from app import db  # Import the database setup
-from sqlalchemy import text  # Import text for raw SQL execution
-from models import User, Category, EvaluationTask, Prompt, Response, Evaluation  # Import models
+from app import app  
+from app import db 
+from sqlalchemy import text  
+from models import User, Category, EvaluationTask, Prompt, Response, Evaluation  
 
 def clear_data():
     with app.app_context():  # Use the app context

@@ -13,7 +13,7 @@ def add_category(name, level, topic):
 def create_evaluation_task(level, subject, topic, setting, is_RAG_enabled, prompts_details):
     """Creates an EvaluationTask with associated different types of prompts."""
     category = add_category(subject, level, topic)
-    context = f"The appropriateness metric for these outputs should be evaluated as they where intended for {level} students."
+    context = f"The appropriateness metric for these outputs should be evaluated as if they were intended for {level} students."
 
     task = EvaluationTask(
         category_id=category.id,

@@ -58,7 +58,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            // Capture the user_id from the response
+            // capture the user_id from the response
             const userId = data.user_id;
             sessionStorage.setItem('user_id', userId);  // Store user_id in session storage
 
@@ -66,7 +66,6 @@
 
             // Pass the user_id to other functions or store it for later use
             prefetchEvaluationTask(1, userId);  
-            //prefetchEvaluationTask(2, userId); 
 
             // Redirect to the instruction page after successful submission
             window.location.href = '/instructions';
@@ -79,7 +78,7 @@
 
     
     function prefetchEvaluationTask(taskId, userId) {
-        fetch(`/get_evaluation_task/${taskId}?user_id=${userId}`)  // Pass user_id as query parameter
+        fetch(`/get_evaluation_task/${taskId}?user_id=${userId}`)  // pass user_id as query parameter
             .then(response => response.json())
             .then(data => {
                 // Store prefetched data in session storage or handle as needed

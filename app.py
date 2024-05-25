@@ -52,7 +52,6 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 
-#db = SQLAlchemy(app)
 
 db.init_app(app)
 

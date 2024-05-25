@@ -92,10 +92,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const nextButton = document.querySelector('.btn.btn-primary');
-        let currentTaskId = 1;  // Start with the first evaluation task
+        let currentTaskId = 1; //first eval task
         let maxTaskId = 12;
         let userId = sessionStorage.getItem('user_id');  // Retrieve user_id from session storage
-        // Redirects to a new page
+        // Redirects to a completion page after all tasks are done
         function redirectToCompletionPage() {
                 window.location.href = '/completion'; 
         }
@@ -161,7 +161,7 @@
     function loadEvaluationTask(taskId, userId) {
         if (taskId > maxTaskId) {
             redirectToCompletionPage();  // Redirect when all tasks are done
-            return;  // Stop further execution
+            return;  
         }
         fetch(`/get_current_task?task_id=${taskId}&user_id=${userId}`)  // Fetch data for the current task
             .then(response => response.json())
@@ -193,11 +193,11 @@
                 });
 
                 if (taskId === maxTaskId) {
-                    nextButton.textContent = 'Finish evaluation';  // Change button text to "Finish evaluation"
+                    nextButton.textContent = 'Finish evaluation'; 
                 } else {
                     prefetchNextEvaluationTask(taskId + 1, userId);  // Prefetch the next task if there are more
                 }
-                updateNextButtonState();  // Re-check the state of the "Next" button
+                updateNextButtonState();  // check the state of the "Next" button
             })
             .catch(error => console.error(`Error fetching current task ${taskId}:`, error));
     }
@@ -207,7 +207,7 @@
             nextButton.addEventListener('click', function() {
                 if (checkIfAllMetricsInteracted()) {
                     submitEvaluations(userId);  // Submit the evaluations before loading the next task
-                    currentTaskId += 1;  // Increment to load the next task
+                    currentTaskId += 1;  // incrmeent to load the next task
                     loadEvaluationTask(currentTaskId, userId);  // Load the new task data
                 }
             });
@@ -274,14 +274,14 @@
             responseBlocks.forEach((block, blockIndex) => {
                 const evaluation = {
                     response_id: parseInt(block.dataset.promptId),  // Unique ID for the response
-                    user_id: userId,  // User performing the evaluation
+                    user_id: userId, 
                     evaluator_type: 'Human',  // Assuming human evaluators
-                    noanswer: false  // Default to false, set to true if skipped
+                    noanswer: false  // default to false, set to true if skipped
                 };
     
                 ['correctness', 'relevance', 'appropriateness', 'clarity'].forEach(metric => {
                     const selectedRadio = document.querySelector(`input[name="${metric}${blockIndex}"]:checked`);
-                    evaluation[metric] = selectedRadio ? parseInt(selectedRadio.value) : 0;  // Assign the selected value, default to 0 if not selected
+                    evaluation[metric] = selectedRadio ? parseInt(selectedRadio.value) : 0;  // default to 0 if not selected
                 });
                 
                 // capture the ranking value
