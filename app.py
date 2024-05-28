@@ -6,7 +6,7 @@ import os
 from google.cloud import secretmanager
 from google.cloud.sql.connector import Connector
 import sqlalchemy
-from flask_sqlalchemy import SQLAlchemy
+#from flask_sqlalchemy import SQLAlchemy
 import openai
 from models import Category, User, Prompt, Response, Evaluation, EvaluationTask, db
 
@@ -69,7 +69,7 @@ def fetch_response_from_openai(system_message, user_message):
         generated_text = completion.choices[0].message.content.strip()
         return generated_text
     except Exception as e:
-        print(f"An error occurred whole fetching data from AI API: {e}")
+        print(f"An error occurred while fetching data from AI API: {e}")
         return None
 
 
