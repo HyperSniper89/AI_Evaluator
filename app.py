@@ -142,11 +142,11 @@ def submit_evaluation():
     data = request.json
     evaluations = data.get('evaluations', [])
 
-    # Check if evaluations array is not empty
+    # Check if evaluations != empty
     if not evaluations:
         return jsonify({'message': 'No evaluations provided'}), 400
 
-    # Loop through each evaluation and validate required fields
+    # looping through each evaluation and validate required fields
     for evaluation in evaluations:
         response_id = evaluation.get('response_id')
         evaluator_type = evaluation.get('evaluator_type')
